@@ -13,6 +13,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.view.Display
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
@@ -20,14 +21,15 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 
 /**
- * Pantalla principal: reproduce el vídeo en bucle en la pantalla 1 y abre una
- * [SecondScreenPresentation] en cada pantalla secundaria que detecte Android.
+ * Pantalla principal: reproduce el vídeo en bucle en la pantalla 1 y, si se han
+ * elegido 2 pantallas, abre una [SecondScreenPresentation] en la secundaria.
  */
 class MainActivity : Activity() {
 
     private lateinit var playerView: PlayerView
     private lateinit var message: TextView
     private lateinit var displayManager: DisplayManager
+    private lateinit var settings: AppSettings
 
     private var player: ExoPlayer? = null
     private var videos: VideoFinder.Videos? = null
@@ -51,14 +53,38 @@ class MainActivity : Activity() {
         playerView = findViewById(R.id.player_view)
         message = findViewById(R.id.message)
         displayManager = getSystemService(DisplayManager::class.java)
+        settings = AppSettings(this)
+
+        // Mantener pulsada la pantalla abre los ajustes
+        playerView.setOnLongClickListener { openSettingsScreen(); true }
     }
 
     override fun onResume() {
         super.onResume()
         SecondScreenPresentation.hideSystemUi(window.decorView)
+        if (!settings.configured) {
+            openSettingsScreen()
+            return
+        }
         if (requestMissingPermissions()) return
         displayManager.registerDisplayListener(displayListener, handler)
         startPlayback()
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        // OK / Menú / Ajustes en el mando abren los ajustes
+        return when (keyCode) {
+            KeyEvent.KEYCODE_MENU, KeyEvent.KEYCODE_SETTINGS,
+            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+                openSettingsScreen()
+                true
+            }
+            else -> super.onKeyUp(keyCode, event)
+        }
+    }
+
+    private fun openSettingsScreen() {
+        startActivity(Intent(this, SettingsActivity::class.java))
     }
 
     override fun onPause() {
@@ -86,6 +112,7 @@ class MainActivity : Activity() {
             return
         }
         message.visibility = View.GONE
+        VideoRotation.apply(playerView, windowManager.defaultDisplay, settings.portrait)
         player = LoopingPlayer.create(this, found.screen1, muted = false).also { playerView.player = it }
         updatePresentations()
     }
@@ -105,6 +132,7 @@ class MainActivity : Activity() {
         val ownDisplayId = window.decorView.display?.displayId ?: Display.DEFAULT_DISPLAY
         val secondary = displayManager.getDisplays(DisplayManager.DISPLAY_CATEGORY_PRESENTATION)
             .filter { it.displayId != ownDisplayId }
+            .take(settings.screens - 1)
             .associateBy { it.displayId }
 
         presentations.keys.filter { it !in secondary }.forEach { presentations.remove(it)?.dismiss() }
@@ -112,7 +140,7 @@ class MainActivity : Activity() {
         for ((id, display) in secondary) {
             if (id in presentations) continue
             try {
-                val presentation = SecondScreenPresentation(this, display, video)
+                val presentation = SecondScreenPresentation(this, display, video, settings.portrait)
                 presentation.show()
                 presentations[id] = presentation
             } catch (e: WindowManager.InvalidDisplayException) {

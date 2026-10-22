@@ -16,6 +16,19 @@ cualquier Android 5.0 o superior.
    - **Mostrar sobre otras aplicaciones** → necesario en Android 10+ para que se
      abra solo al encender.
 
+## Ajustes
+
+La primera vez que abres la app sale la pantalla de **Ajustes**:
+
+- **Número de pantallas**: 1 o 2.
+- **Orientación**: Horizontal o Vertical (para pantallas colgadas en vertical).
+
+Pulsa **Guardar y reproducir**. Desde entonces, al encender, el vídeo arranca
+directamente con esos ajustes.
+
+Para volver a los ajustes: **mantén pulsada la pantalla** o pulsa **OK / Menú**
+en el mando.
+
 ## Poner el vídeo
 
 Crea una carpeta llamada **`VideoLoop`** y mete dentro tu vídeo:
@@ -34,10 +47,11 @@ abrir la app). Si la app no encuentra vídeo, lo vuelve a buscar cada 10 segundo
 
 ## Cómo funciona
 
-- **Pantalla 1**: la app a pantalla completa, forzada en horizontal, con sonido.
-- **Pantalla 2**: se usa la API `Presentation` de Android para mostrar el vídeo en la
-  segunda pantalla (sin sonido, para que no se oiga duplicado). Si esa pantalla está
-  configurada en vertical, el vídeo se gira 90º para verse en horizontal.
+- **Pantalla 1**: la app a pantalla completa, con sonido.
+- **Pantalla 2** (si eliges 2 pantallas): se usa la API `Presentation` de Android
+  para mostrar el vídeo en la segunda pantalla (sin sonido, para que no se oiga
+  duplicado).
+- Si la orientación elegida no coincide con la de la pantalla, el vídeo se gira 90º.
 - Reproductor **ExoPlayer (Media3)**, que hace el bucle sin cortes y se recupera solo
   si hay un error.
 - La pantalla nunca se apaga mientras se reproduce.
