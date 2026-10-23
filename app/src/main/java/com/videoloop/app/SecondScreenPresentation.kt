@@ -15,6 +15,7 @@ class SecondScreenPresentation(
     display: Display,
     private val video: File,
     private val portrait: Boolean,
+    private val resizeMode: Int,
 ) : Presentation(context, display) {
 
     private var player: ExoPlayer? = null
@@ -27,6 +28,7 @@ class SecondScreenPresentation(
         val playerView = findViewById<PlayerView>(R.id.player_view)
 
         VideoRotation.apply(playerView, display, portrait)
+        playerView.resizeMode = resizeMode
 
         // Sin sonido para que no se oiga el audio duplicado
         player = LoopingPlayer.create(context, video, muted = true).also { playerView.player = it }

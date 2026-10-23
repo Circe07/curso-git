@@ -113,6 +113,7 @@ class MainActivity : Activity() {
         }
         message.visibility = View.GONE
         VideoRotation.apply(playerView, windowManager.defaultDisplay, settings.portrait)
+        playerView.resizeMode = settings.resizeMode
         player = LoopingPlayer.create(this, found.screen1, muted = false).also { playerView.player = it }
         updatePresentations()
     }
@@ -140,7 +141,7 @@ class MainActivity : Activity() {
         for ((id, display) in secondary) {
             if (id in presentations) continue
             try {
-                val presentation = SecondScreenPresentation(this, display, video, settings.portrait)
+                val presentation = SecondScreenPresentation(this, display, video, settings.portrait, settings.resizeMode)
                 presentation.show()
                 presentations[id] = presentation
             } catch (e: WindowManager.InvalidDisplayException) {

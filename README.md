@@ -22,6 +22,10 @@ La primera vez que abres la app sale la pantalla de **Ajustes**:
 
 - **Número de pantallas**: 1 o 2.
 - **Orientación**: Horizontal o Vertical (para pantallas colgadas en vertical).
+- **Ajuste del vídeo**: el vídeo siempre ocupa toda la pantalla, sin bordes negros.
+  - *Rellenar* (por defecto): mantiene la proporción y recorta lo que sobra.
+  - *Estirar*: no recorta nada, pero deforma un poco la imagen si el vídeo no
+    tiene la misma proporción que la pantalla.
 
 Pulsa **Guardar y reproducir**. Desde entonces, al encender, el vídeo arranca
 directamente con esos ajustes.

@@ -60,6 +60,25 @@
         </RadioGroup>
 
         <TextView
+            style="@style/SettingsLabel"
+            android:text="Ajuste del vídeo (siempre a pantalla completa)" />
+
+        <RadioGroup
+            android:id="@+id/fit_group"
+            style="@style/SettingsGroup">
+
+            <RadioButton
+                android:id="@+id/fit_zoom"
+                style="@style/SettingsOption"
+                android:text="Rellenar (recorta bordes)" />
+
+            <RadioButton
+                android:id="@+id/fit_stretch"
+                style="@style/SettingsOption"
+                android:text="Estirar" />
+        </RadioGroup>
+
+        <TextView
             android:id="@+id/video_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
